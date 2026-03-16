@@ -2,8 +2,10 @@ package com.spring.security.basic.auth.service;
 
 import com.spring.security.basic.auth.entity.User;
 import com.spring.security.basic.auth.entity.UserDTO;
+import com.spring.security.basic.auth.mapper.MapStructMapper;
 import com.spring.security.basic.auth.mapper.ModelMapperConfig;
 import com.spring.security.basic.auth.repository.UserRepository;
+import org.hibernate.mapping.Map;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,18 @@ public class UserService {
     @Autowired
     private ModelMapper modelMapperConfig;
 
+    @Autowired
+    private MapStructMapper mapStructMapper;
+
     public UserDTO registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User save = userRepository.save(user);
         return modelMapperConfig.map(save, UserDTO.class);
     }
 
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found..."));
+
+        return mapStructMapper.toDto(user);
+    }
 }
