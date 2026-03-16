@@ -31,38 +31,24 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getServletPath();
-
-        // Skip authentication for public endpoints
-        if (path.startsWith("/public")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
+        if (authHeader!=null && authHeader.startsWith("Bearer ")){
             token = authHeader.substring(7);
             username = jwtUtil.extractUsername(token);
 
-            if (username != null &&
-                    SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+                UserDetails userDetails = userDetailServiceImpl.loadUserByUsername(username);
 
-                UserDetails userDetails =
-                        userDetailServiceImpl.loadUserByUsername(username);
-
-                if (jwtUtil.validateToken(token, userDetails.getUsername())) {
-
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities()
-                            );
-
+                if (jwtUtil.validateToken(token, userDetails.getUsername())){
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
