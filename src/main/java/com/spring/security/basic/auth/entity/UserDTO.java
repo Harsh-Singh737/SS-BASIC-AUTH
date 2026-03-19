@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({"id","username","email","roles"})
-public class UserDTO {
+public class UserDTO implements Serializable {
 
     private Long Id;
     private String username;
