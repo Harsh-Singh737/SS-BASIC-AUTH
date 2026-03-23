@@ -33,7 +33,7 @@ public class SpringSecurity {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/cachedUser/**").permitAll()
+                        .requestMatchers("/public/**", "/cachedUser/**", "/newFeature/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
